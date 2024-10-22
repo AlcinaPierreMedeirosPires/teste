@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Jogo Simples</title>
+    <title>O JOGO</title>
     <style>
         canvas {
             border: 1px solid #d3d3d3;
@@ -21,14 +21,15 @@
 
         const myGameArea = {
             canvas: document.createElement("canvas"),
+            keys: {},
             start() {
                 this.canvas.width = 480;
                 this.canvas.height = 270;
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.interval = setInterval(updateGameArea, 20);
-                window.addEventListener('keydown', (e) => { this.key = e.keyCode; });
-                window.addEventListener('keyup', () => { this.key = false; });
+                window.addEventListener('keydown', (e) => { this.keys[e.keyCode] = true; });
+                window.addEventListener('keyup', (e) => { this.keys[e.keyCode] = false; });
             },
             clear() { this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); },
             stop() { clearInterval(this.interval); alert("Você bateu em um obstáculo!"); }
@@ -67,17 +68,14 @@
             if (jogador1.crashWith(obstaculo) || jogador2.crashWith(obstaculo)) {
                 myGameArea.stop();
             }
-            jogador1.speedX = myGameArea.key === 37 ? -1 : myGameArea.key === 39 ? 1 : 0; // Jogador 1: esquerda/direita
-            jogador1.speedY = myGameArea.key === 38 ? -1 : myGameArea.key === 40 ? 1 : 0; // Jogador 1: cima/baixo
-            
-            // Jogador 2 (WASD)
-            if (myGameArea.key === 65) jogador2.speedX = -1; // A
-            else if (myGameArea.key === 68) jogador2.speedX = 1; // D
-            else jogador2.speedX = 0;
 
-            if (myGameArea.key === 87) jogador2.speedY = -1; // W
-            else if (myGameArea.key === 83) jogador2.speedY = 1; // S
-            else jogador2.speedY = 0;
+            // Movimentação do Jogador 1
+            jogador1.speedX = myGameArea.keys[37] ? -1 : myGameArea.keys[39] ? 1 : 0; // esquerda/direita
+            jogador1.speedY = myGameArea.keys[38] ? -1 : myGameArea.keys[40] ? 1 : 0; // cima/baixo
+            
+            // Movimentação do Jogador 2 (WASD)
+            jogador2.speedX = myGameArea.keys[65] ? -1 : myGameArea.keys[68] ? 1 : 0; // A/D
+            jogador2.speedY = myGameArea.keys[87] ? -1 : myGameArea.keys[83] ? 1 : 0; // W/S
 
             jogador1.newPos();
             jogador2.newPos();
