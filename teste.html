@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Jogo</title>
+    <title>BATE-BATE</title>
     <style>
         canvas {
             border: 1px solid #d3d3d3;
@@ -72,4 +72,21 @@
             let speedY1 = myGameArea.keys[38] ? -1 : myGameArea.keys[40] ? 1 : 0; // cima/baixo
             
             // Movimentação do Jogador 2 (WASD)
-            let speedX2 = myGameArea.keys[65] ? -1 : myGameArea.
+            let speedX2 = myGameArea.keys[65] ? -1 : myGameArea.keys[68] ? 1 : 0; // A/D
+            let speedY2 = myGameArea.keys[87] ? -1 : myGameArea.keys[83] ? 1 : 0; // W/S
+
+            jogador1.newPos(speedX1, speedY1);
+            jogador2.newPos(speedX2, speedY2);
+            obstaculo.update();
+            jogador1.update();
+            jogador2.update();
+        }
+    </script>
+</head>
+<body onload="startGame();">
+    <div style="text-align:center;">
+        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
+        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
+    </div>
+</body>
+</html>
