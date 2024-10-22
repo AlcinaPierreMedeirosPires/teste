@@ -2,66 +2,82 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Jogo de Colisão</title>
+    <title>Jogo Simples</title>
     <style>
-        canvas { border: 1px solid #d3d3d3; background-color: #A0A0A0; }
-        button { margin: 5px; padding: 10px; }
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #A0A0A0;
+        }
     </style>
+    <script>
+        let myGamePiece, myObstacle;
+
+        function startGame() {
+            myGamePiece = new Component(30, 30, "red", 10, 120);
+            myObstacle = new Component(10, 200, "green", 300, 120);
+            myGameArea.start();
+        }
+
+        const myGameArea = {
+            canvas: document.createElement("canvas"),
+            start() {
+                this.canvas.width = 480;
+                this.canvas.height = 270;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateGameArea, 20);
+                window.addEventListener('keydown', (e) => { this.key = e.keyCode; });
+                window.addEventListener('keyup', () => { this.key = false; });
+            },
+            clear() { this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); },
+            stop() { clearInterval(this.interval); alert("Você bateu em um obstáculo!"); }
+        };
+
+        function Component(width, height, color, x, y) {
+            this.width = width;
+            this.height = height;
+            this.color = color;
+            this.x = x;
+            this.y = y;
+            this.speedX = 0;
+            this.speedY = 0;
+
+            this.update = function() {
+                const ctx = myGameArea.context;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            };
+
+            this.crashWith = function(other) {
+                return !(this.x + this.width < other.x || this.x > other.x + other.width ||
+                         this.y + this.height < other.y || this.y > other.y + other.height);
+            };
+
+            this.newPos = function() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.x = Math.max(0, Math.min(this.x, myGameArea.canvas.width - this.width));
+                this.y = Math.max(0, Math.min(this.y, myGameArea.canvas.height - this.height));
+            };
+        }
+
+        function updateGameArea() {
+            myGameArea.clear();
+            if (myGamePiece.crashWith(myObstacle)) {
+                myGameArea.stop();
+            }
+            myGamePiece.speedX = myGameArea.key === 37 ? -1 : myGameArea.key === 39 ? 1 : 0;
+            myGamePiece.speedY = myGameArea.key === 38 ? -1 : myGameArea.key === 40 ? 1 : 0;
+            myGamePiece.newPos();
+            myObstacle.update();
+            myGamePiece.update();
+        }
+    </script>
 </head>
 <body onload="startGame();">
-    <canvas id="gameCanvas" width="480" height="270"></canvas>
-    <div>
-        <h2>Jogador 1 (Vermelho)</h2>
-        <button onclick="move(1, 0, -1)">Cima</button>
-        <button onclick="move(1, 0, 1)">Baixo</button>
-        <button onclick="move(1, -1, 0)">Esquerda</button>
-        <button onclick="move(1, 1, 0)">Direita</button>
+    <div style="text-align:center;">
+        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
+        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
     </div>
-    <div>
-        <h2>Jogador 2 (Azul)</h2>
-        <button onclick="move(2, 0, -1)">Cima</button>
-        <button onclick="move(2, 0, 1)">Baixo</button>
-        <button onclick="move(2, -1, 0)">Esquerda</button>
-        <button onclick="move(2, 1, 0)">Direita</button>
-    </div>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        let jogadores = [
-            { x: 10, y: 120, color: "red", speedX: 0, speedY: 0 },
-            { x: 420, y: 120, color: "blue", speedX: 0, speedY: 0 }
-        ];
-        
-        function startGame() {
-            setInterval(update, 20);
-            window.addEventListener('keydown', (e) => handleKeys(e.keyCode, true));
-            window.addEventListener('keyup', (e) => handleKeys(e.keyCode, false));
-        }
-
-        function update() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            jogadores.forEach(j => {
-                j.x += j.speedX;
-                j.y += j.speedY;
-                if (j.x < 0) j.x = 0; 
-                if (j.x > canvas.width - 30) j.x = canvas.width - 30; 
-                if (j.y < 0) j.y = 0; 
-                if (j.y > canvas.height - 30) j.y = canvas.height - 30; 
-                ctx.fillStyle = j.color;
-                ctx.fillRect(j.x, j.y, 30, 30);
-            });
-            if (collision(jogadores[0], jogadores[1])) {
-                alert("COLISÃO DETECTADA");
-                clearInterval();
-            }
-        }
-
-        function move(player, dx, dy) {
-            jogadores[player - 1].speedX += dx;
-            jogadores[player - 1].speedY += dy;
-        }
-
-        function handleKeys(key, isDown) {
-            const controls = {
-                37: [2, -1, 0], 39: [2, 1, 0], 38: [2, 0, -1], 40: [2, 0, 1], // Jogador 2
-                65: [1, -1, 0], 68: [1, 1, 0], 87: [1, 0, -1], 83: [1, 0, 1]   // Jog
+</body>
+</html>
