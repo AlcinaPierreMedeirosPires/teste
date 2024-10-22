@@ -41,8 +41,6 @@
             this.color = color;
             this.x = x;
             this.y = y;
-            this.speedX = 0;
-            this.speedY = 0;
 
             this.update = function() {
                 const ctx = myGameArea.context;
@@ -55,9 +53,9 @@
                          this.y + this.height < other.y || this.y > other.y + other.height);
             };
 
-            this.newPos = function() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+            this.newPos = function(speedX, speedY) {
+                this.x += speedX;
+                this.y += speedY;
                 this.x = Math.max(0, Math.min(this.x, myGameArea.canvas.width - this.width));
                 this.y = Math.max(0, Math.min(this.y, myGameArea.canvas.height - this.height));
             };
@@ -70,25 +68,8 @@
             }
 
             // Movimentação do Jogador 1
-            jogador1.speedX = myGameArea.keys[37] ? -1 : myGameArea.keys[39] ? 1 : 0; // esquerda/direita
-            jogador1.speedY = myGameArea.keys[38] ? -1 : myGameArea.keys[40] ? 1 : 0; // cima/baixo
+            let speedX1 = myGameArea.keys[37] ? -1 : myGameArea.keys[39] ? 1 : 0; // esquerda/direita
+            let speedY1 = myGameArea.keys[38] ? -1 : myGameArea.keys[40] ? 1 : 0; // cima/baixo
             
             // Movimentação do Jogador 2 (WASD)
-            jogador2.speedX = myGameArea.keys[65] ? -1 : myGameArea.keys[68] ? 1 : 0; // A/D
-            jogador2.speedY = myGameArea.keys[87] ? -1 : myGameArea.keys[83] ? 1 : 0; // W/S
-
-            jogador1.newPos();
-            jogador2.newPos();
-            obstaculo.update();
-            jogador1.update();
-            jogador2.update();
-        }
-    </script>
-</head>
-<body onload="startGame();">
-    <div style="text-align:center;">
-        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
-        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
-    </div>
-</body>
-</html>
+            let speedX2 = myGameArea.keys[65] ? -1 : myGameArea.
