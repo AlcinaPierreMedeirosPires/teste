@@ -10,11 +10,12 @@
         }
     </style>
     <script>
-        let myGamePiece, myObstacle;
+        let jogador1, jogador2, obstaculo;
 
         function startGame() {
-            myGamePiece = new Component(30, 30, "red", 10, 120);
-            myObstacle = new Component(10, 200, "green", 300, 120);
+            jogador1 = new Component(30, 30, "red", 10, 120);
+            jogador2 = new Component(30, 30, "blue", 10, 150);
+            obstaculo = new Component(10, 200, "green", 300, 120);
             myGameArea.start();
         }
 
@@ -48,36 +49,4 @@
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             };
 
-            this.crashWith = function(other) {
-                return !(this.x + this.width < other.x || this.x > other.x + other.width ||
-                         this.y + this.height < other.y || this.y > other.y + other.height);
-            };
-
-            this.newPos = function() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.x = Math.max(0, Math.min(this.x, myGameArea.canvas.width - this.width));
-                this.y = Math.max(0, Math.min(this.y, myGameArea.canvas.height - this.height));
-            };
-        }
-
-        function updateGameArea() {
-            myGameArea.clear();
-            if (myGamePiece.crashWith(myObstacle)) {
-                myGameArea.stop();
-            }
-            myGamePiece.speedX = myGameArea.key === 37 ? -1 : myGameArea.key === 39 ? 1 : 0;
-            myGamePiece.speedY = myGameArea.key === 38 ? -1 : myGameArea.key === 40 ? 1 : 0;
-            myGamePiece.newPos();
-            myObstacle.update();
-            myGamePiece.update();
-        }
-    </script>
-</head>
-<body onload="startGame();">
-    <div style="text-align:center;">
-        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
-        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
-    </div>
-</body>
-</html>
+            this.crashWith = fun
