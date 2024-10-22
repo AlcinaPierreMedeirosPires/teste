@@ -31,11 +31,16 @@
     var player1 = new Component(30, 30, "red", 10, 120);
     var player2 = new Component(30, 30, "blue", 420, 120);
     var gameInterval;
+    
+    var keys = {};
 
     function startGame() {
         gameInterval = setInterval(updateGameArea, 20);
         window.addEventListener('keydown', function(e) {
-            handleKeyPress(e);
+            keys[e.key] = true;
+        });
+        window.addEventListener('keyup', function(e) {
+            keys[e.key] = false;
         });
     }
 
@@ -44,34 +49,18 @@
         alert("COLISÃO DETECTADA");
     }
 
-    function handleKeyPress(e) {
-        // Movimenta player1 com W, A, S, D
-        if (e.key === 'w') movePlayer1('up');
-        if (e.key === 's') movePlayer1('down');
-        if (e.key === 'a') movePlayer1('left');
-        if (e.key === 'd') movePlayer1('right');
+    function movePlayers() {
+        // Movimenta player1
+        if (keys['w']) player1.y -= 1;
+        if (keys['s']) player1.y += 1;
+        if (keys['a']) player1.x -= 1;
+        if (keys['d']) player1.x += 1;
 
-        // Movimenta player2 com as setas
-        if (e.key === 'ArrowUp') movePlayer2('up');
-        if (e.key === 'ArrowDown') movePlayer2('down');
-        if (e.key === 'ArrowLeft') movePlayer2('left');
-        if (e.key === 'ArrowRight') movePlayer2('right');
-    }
-
-    function movePlayer1(direction) {
-        if (direction === 'up') player1.y -= 1;
-        if (direction === 'down') player1.y += 1;
-        if (direction === 'left') player1.x -= 1;
-        if (direction === 'right') player1.x += 1;
-        checkCollision();
-    }
-
-    function movePlayer2(direction) {
-        if (direction === 'up') player2.y -= 1;
-        if (direction === 'down') player2.y += 1;
-        if (direction === 'left') player2.x -= 1;
-        if (direction === 'right') player2.x += 1;
-        checkCollision();
+        // Movimenta player2
+        if (keys['ArrowUp']) player2.y -= 1;
+        if (keys['ArrowDown']) player2.y += 1;
+        if (keys['ArrowLeft']) player2.x -= 1;
+        if (keys['ArrowRight']) player2.x += 1;
     }
 
     function checkCollision() {
@@ -82,6 +71,8 @@
 
     function updateGameArea() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        movePlayers();
+        checkCollision();
         player1.update();
         player2.update();
     }
