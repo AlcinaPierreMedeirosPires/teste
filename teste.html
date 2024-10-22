@@ -63,8 +63,17 @@
 
         function updateGameArea() {
             myGameArea.clear();
+
+            // Verifica colisão entre jogadores
+            if (jogador1.crashWith(jogador2)) {
+                myGameArea.stop();
+                alert("COLISÃO ENTRE JOGADORES!");
+            }
+
+            // Verifica colisão com o obstáculo
             if (jogador1.crashWith(obstaculo) || jogador2.crashWith(obstaculo)) {
                 myGameArea.stop();
+                alert("BOOM! VOCÊ BATEU NO OBSTÁCULO! :(");
             }
 
             // Movimentação do Jogador 1
@@ -84,9 +93,5 @@
     </script>
 </head>
 <body onload="startGame();">
-    <div style="text-align:center;">
-        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
-        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
-    </div>
 </body>
 </html>
