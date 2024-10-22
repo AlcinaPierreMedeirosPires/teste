@@ -1,97 +1,105 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Jogo</title>
+    <title>Jogo de Colisão</title>
     <style>
         canvas {
             border: 1px solid #d3d3d3;
             background-color: #A0A0A0;
         }
     </style>
-    <script>
-        let jogador1, jogador2, obstaculo;
-
-        function startGame() {
-            jogador1 = new Component(30, 30, "red", 10, 120);
-            jogador2 = new Component(30, 30, "blue", 10, 150);
-            obstaculo = new Component(10, 200, "green", 300, 120);
-            myGameArea.start();
-        }
-
-        const myGameArea = {
-            canvas: document.createElement("canvas"),
-            keys: {},
-            start() {
-                this.canvas.width = 480;
-                this.canvas.height = 270;
-                this.context = this.canvas.getContext("2d");
-                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-                this.interval = setInterval(updateGameArea, 20);
-                window.addEventListener('keydown', (e) => { this.keys[e.keyCode] = true; });
-                window.addEventListener('keyup', (e) => { this.keys[e.keyCode] = false; });
-            },
-            clear() { this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); },
-            stop() { clearInterval(this.interval); alert("BOOM! VOCÊ BATEU! :("); }
-        };
-
-        function Component(width, height, color, x, y) {
-            this.width = width;
-            this.height = height;
-            this.color = color;
-            this.x = x;
-            this.y = y;
-
-            this.update = function() {
-                const ctx = myGameArea.context;
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-            };
-
-            this.crashWith = function(other) {
-                return !(this.x + this.width < other.x || this.x > other.x + other.width ||
-                         this.y + this.height < other.y || this.y > other.y + other.height);
-            };
-
-            this.newPos = function(speedX, speedY) {
-                this.x += speedX;
-                this.y += speedY;
-                this.x = Math.max(0, Math.min(this.x, myGameArea.canvas.width - this.width));
-                this.y = Math.max(0, Math.min(this.y, myGameArea.canvas.height - this.height));
-            };
-        }
-
-        function updateGameArea() {
-            myGameArea.clear();
-
-            // Verifica colisão entre jogadores
-            if (jogador1.crashWith(jogador2)) {
-                myGameArea.stop();
-                alert("COLISÃO ENTRE JOGADORES!");
-            }
-
-            // Verifica colisão com o obstáculo
-            if (jogador1.crashWith(obstaculo) || jogador2.crashWith(obstaculo)) {
-                myGameArea.stop();
-                alert("BOOM! VOCÊ BATEU NO OBSTÁCULO! :(");
-            }
-
-            // Movimentação do Jogador 1
-            let speedX1 = myGameArea.keys[37] ? -1 : myGameArea.keys[39] ? 1 : 0; // esquerda/direita
-            let speedY1 = myGameArea.keys[38] ? -1 : myGameArea.keys[40] ? 1 : 0; // cima/baixo
-            
-            // Movimentação do Jogador 2 (WASD)
-            let speedX2 = myGameArea.keys[65] ? -1 : myGameArea.keys[68] ? 1 : 0; // A/D
-            let speedY2 = myGameArea.keys[87] ? -1 : myGameArea.keys[83] ? 1 : 0; // W/S
-
-            jogador1.newPos(speedX1, speedY1);
-            jogador2.newPos(speedX2, speedY2);
-            obstaculo.update();
-            jogador1.update();
-            jogador2.update();
-        }
-    </script>
 </head>
 <body onload="startGame();">
+
+<canvas id="gameCanvas" width="480" height="270"></canvas>
+<div style="text-align: center;">
+    <button onclick="movePlayer1('up')">Cima (W)</button>
+    <button onclick="movePlayer1('down')">Baixo (S)</button>
+    <button onclick="movePlayer1('left')">Esquerda (A)</button>
+    <button onclick="movePlayer1('right')">Direita (D)</button>
+    <br><br>
+    <button onclick="movePlayer2('up')">Cima (Seta Cima)</button>
+    <button onclick="movePlayer2('down')">Baixo (Seta Baixo)</button>
+    <button onclick="movePlayer2('left')">Esquerda (Seta Esquerda)</button>
+    <button onclick="movePlayer2('right')">Direita (Seta Direita)</button>
+</div>
+
+<script>
+    var canvas = document.getElementById('gameCanvas');
+    var ctx = canvas.getContext('2d');
+
+    var player1 = new Component(30, 30, "red", 10, 120);
+    var player2 = new Component(30, 30, "blue", 420, 120);
+    var gameInterval;
+
+    function startGame() {
+        gameInterval = setInterval(updateGameArea, 20);
+        window.addEventListener('keydown', function(e) {
+            handleKeyPress(e);
+        });
+    }
+
+    function stopGame() {
+        clearInterval(gameInterval);
+        alert("COLISÃO DETECTADA");
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'w') movePlayer1('up');
+        if (e.key === 's') movePlayer1('down');
+        if (e.key === 'a') movePlayer1('left');
+        if (e.key === 'd') movePlayer1('right');
+    }
+
+    function movePlayer1(direction) {
+        if (direction === 'up') player1.y -= 1;
+        if (direction === 'down') player1.y += 1;
+        if (direction === 'left') player1.x -= 1;
+        if (direction === 'right') player1.x += 1;
+        checkCollision();
+    }
+
+    function movePlayer2(direction) {
+        if (direction === 'up') player2.y -= 1;
+        if (direction === 'down') player2.y += 1;
+        if (direction === 'left') player2.x -= 1;
+        if (direction === 'right') player2.x += 1;
+        checkCollision();
+    }
+
+    function checkCollision() {
+        if (player1.crashWith(player2)) {
+            stopGame();
+        }
+    }
+
+    function updateGameArea() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        player1.update();
+        player2.update();
+    }
+
+    function Component(width, height, color, x, y) {
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.x = x;
+        this.y = y;
+
+        this.update = function() {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+
+        this.crashWith = function(other) {
+            return !(
+                this.y + this.height < other.y || 
+                this.y > other.y + other.height || 
+                this.x + this.width < other.x || 
+                this.x > other.x + other.width
+            );
+        }
+    }
+</script>
 </body>
 </html>
