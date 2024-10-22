@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Jogo Simples</title>
+    <title>Jogo</title>
     <style>
         canvas {
             border: 1px solid #d3d3d3;
@@ -32,7 +32,7 @@
                 window.addEventListener('keyup', (e) => { this.keys[e.keyCode] = false; });
             },
             clear() { this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); },
-            stop() { clearInterval(this.interval); alert("Você bateu em um obstáculo!"); }
+            stop() { clearInterval(this.interval); alert("BOOM! VOCÊ BATEU! :("); }
         };
 
         function Component(width, height, color, x, y) {
