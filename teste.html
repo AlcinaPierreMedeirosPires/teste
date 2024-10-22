@@ -45,6 +45,12 @@
     }
 
     function handleKeyPress(e) {
+        // Movimenta player1 com W, A, S, D
+        if (e.key === 'w') movePlayer1('up');
+        if (e.key === 's') movePlayer1('down');
+        if (e.key === 'a') movePlayer1('left');
+        if (e.key === 'd') movePlayer1('right');
+
         // Movimenta player2 com as setas
         if (e.key === 'ArrowUp') movePlayer2('up');
         if (e.key === 'ArrowDown') movePlayer2('down');
