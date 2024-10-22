@@ -49,4 +49,48 @@
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             };
 
-            this.crashWith = fun
+            this.crashWith = function(other) {
+                return !(this.x + this.width < other.x || this.x > other.x + other.width ||
+                         this.y + this.height < other.y || this.y > other.y + other.height);
+            };
+
+            this.newPos = function() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.x = Math.max(0, Math.min(this.x, myGameArea.canvas.width - this.width));
+                this.y = Math.max(0, Math.min(this.y, myGameArea.canvas.height - this.height));
+            };
+        }
+
+        function updateGameArea() {
+            myGameArea.clear();
+            if (jogador1.crashWith(obstaculo) || jogador2.crashWith(obstaculo)) {
+                myGameArea.stop();
+            }
+            jogador1.speedX = myGameArea.key === 37 ? -1 : myGameArea.key === 39 ? 1 : 0; // Jogador 1: esquerda/direita
+            jogador1.speedY = myGameArea.key === 38 ? -1 : myGameArea.key === 40 ? 1 : 0; // Jogador 1: cima/baixo
+            
+            // Jogador 2 (WASD)
+            if (myGameArea.key === 65) jogador2.speedX = -1; // A
+            else if (myGameArea.key === 68) jogador2.speedX = 1; // D
+            else jogador2.speedX = 0;
+
+            if (myGameArea.key === 87) jogador2.speedY = -1; // W
+            else if (myGameArea.key === 83) jogador2.speedY = 1; // S
+            else jogador2.speedY = 0;
+
+            jogador1.newPos();
+            jogador2.newPos();
+            obstaculo.update();
+            jogador1.update();
+            jogador2.update();
+        }
+    </script>
+</head>
+<body onload="startGame();">
+    <div style="text-align:center;">
+        <p>Para saber os códigos das teclas, entre na seguinte página:</p>
+        <p><a href="https://www.w3.org/2002/09/tests/keys.html">Códigos das teclas</a></p>
+    </div>
+</body>
+</html>
